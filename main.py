@@ -9,10 +9,16 @@ def getGoodPrime():
         if p % 4 == 3:
             return p
 
-def encrypt(messge,n):
-    return m**2 % n
+# TODO Need to be in the group so it need to fit
+# TODO Add some randomes salt, read in the book
+def encrypt(message,publicKey):
+    
+    postfix = message & 0xFFFFFFFFFFFFFFFF #Get the 64 first bits
+    message = (message << 64) | postfix
+     
+    return message**2 % publicKey
 
-def decrypt(c,p,q):
+def decrypt(cryptogram,p,q):
     
     n = p*q
     a = 0
@@ -39,8 +45,14 @@ def decrypt(c,p,q):
     x = (a*p*s + b*q*r) % n
     y = (a*p*s - b*q*r) % n
     
-    return (x, -x % n,y,-y % n)
-
+    for message in (x, -x % n,y,-y % n):
+        postfix = message & 0xFFFFFFFFFFFFFFFF #Get the postfix 
+        message = message >> 64 # Remove postfix
+        if ((postfix ^ message) & 0xFFFFFFFFFFFFFFFF) == 0:
+            return message
+    
+    print("No postfix matched the expected postfix")
+    return -1
 def extendedEuclideanAlgorithm(a,b):
     
     d = 0
