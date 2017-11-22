@@ -19,11 +19,11 @@ def decrypt(c,p,q):
     b = 0
 
     if p > q:
-        t = ExtendedEuclideanAlgorithm(p,q)
+        t = extendedEuclideanAlgorithm(p,q)
         a = t[1]
         b = t[2]
     else:
-        t = ExtendedEuclideanAlgorithm(q,p)
+        t = extendedEuclideanAlgorithm(q,p)
         a = t[2]
         b = t[1]
 
@@ -33,11 +33,12 @@ def decrypt(c,p,q):
     s = c**(int((q+1)/4)) % q 
     print("#1")
     x = (a*p*s + b*q*r) % n
-    x = (a*p*s - b*q*r) % n
+    y = (a*p*s - b*q*r) % n
     
     return (x, -x % n,y,-y % n)
 
-def ExtendedEuclideanAlgorithm(a,b):
+def extendedEuclideanAlgorithm(a,b):
+    
     d = 0
     x = 0
     y = 0
@@ -162,7 +163,7 @@ print(gcd1(20,8)) #=4
 print(gcd1(8,4))  #=4
 
 
-print(ExtendedEuclideanAlgorithm(4864,3458))
+print(extendedEuclideanAlgorithm(4864,3458))
 
 """Crypto"""
 
