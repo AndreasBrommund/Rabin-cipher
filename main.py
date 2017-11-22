@@ -155,9 +155,11 @@ print(powerMod(3,255,321))      #=57
 print(powerMod(3,0,321))        #=1
 print(powerMod(3,320,321))      #=9
 print(powerMod(5,596,1234))     #=1013
+print(powerMod(69,2,77)) #=64
+print(powerMod(69,4,77)) #=15
 print(powerMod(47874897438974839,859043859042385098494890584209839058243905432534,859043859042385098494890584209839058243905432534859043859042385098494890584209839058243905432534)) #=741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531
-
-
+print(powerMod(69,2,77)) #=64
+print(powerMod(69,4,77)) #=15
 
 
 print(gcd(12,5)) #=1
@@ -183,16 +185,34 @@ print(gcd1(8,4))  #=4
 
 print(extendedEuclideanAlgorithm(4864,3458))
 
+
 """Crypto"""
 
 
 p = getGoodPrime()
 # TODO Can't be the same fix it later
 q = getGoodPrime()
-n = p*q
-
-
+n= p*q
 m = 19950417
+m = 123456789987654321123456789
+c = encrypt(m,n)
+
+print("p=",p,"OK? =3?",p % 4)
+print("q=",q,"OK? =3?",p % 4)
+print("n=",n)
+print("m=",m)
+print("c=",c)
+mm  = decrypt(c,p,q)
+print("m'=", mm)
+print(mm == m)
+
+
+
+
+p = 7
+q = 11
+
+n = p*q
 
 
 print(p)
@@ -202,10 +222,13 @@ print("--")
 print(n)
 print("--")
 
-c = encrypt(m,n)
-print(c)
-print("---")
-print(decrypt(c,p,q))
 
-
-
+for m in range(1000887647363000000000,1000887647363000000100):
+    p = getGoodPrime()
+    q = getGoodPrime()
+    n= p*q
+    c = encrypt(m,n)
+    mm  = decrypt(c,p,q)
+    print(mm,"\n")
+    print(m,"\n")
+    assert mm == m, "Not equal"
