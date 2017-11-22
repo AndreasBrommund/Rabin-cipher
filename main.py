@@ -1,5 +1,5 @@
 from Crypto.Util import number
-import math
+import sys
 
 def getGoodPrime():
 
@@ -96,12 +96,14 @@ def powerMod(base,exponent,modulo):
     b = 1
     if exponent == 0:
         return b
-    length= math.ceil(math.log2(exponent))
+    length = exponent.bit_length()
     a = base
     if exponent & 1 == 1: 
         b = base
     exponent = exponent >> 1
-    for _ in range(1,length): #length if exlusive
+
+    for x in range(1,length): #length if exlusive
+        
         a = a**2 % modulo
         if exponent & 1 == 1:
             b = a*b % modulo
