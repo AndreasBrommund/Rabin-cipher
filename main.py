@@ -1,4 +1,5 @@
 from Crypto.Util import number
+import math
 
 def getGoodPrime():
 
@@ -82,6 +83,30 @@ def ExtendedEuclideanAlgorithm(a,b):
 
     return (d,x,y)
 
+def powerMod(base,exponent,modulo):
+    if 0 > exponent:
+        print("Exponent need to be non-negative.")
+        # TODO Better error (the funciton can return -1)
+        return -1
+    if exponent >= modulo:
+        print("The condition exponent < modulo is not fulfilled.")
+        # TODO Better error (the funciton can return -1)
+        return -1
+    b = 1
+    if exponent == 0:
+        return b
+    length= math.ceil(math.log2(exponent))
+    a = base
+    if exponent & 1 == 1: 
+        b = base
+    exponent = exponent >> 1
+    for _ in range(1,length): #length if exlusive
+        a = a**2 % modulo
+        if exponent & 1 == 1:
+            b = a*b % modulo
+        exponent = exponent >> 1
+    return b
+    
 
 
 
@@ -102,7 +127,16 @@ def gcd1(a,b):
     d = a
     return d
 
-
+print(powerMod(2,-10000,34))    #=-1 Error
+print(powerMod(2,-1,34))        #=-1 Error
+print(powerMod(7,45,5))         #=-1 Error 
+print(powerMod(3,67,80))        #=27
+print(powerMod(7,195,12454))    #=6973
+print(powerMod(3,255,321))      #=57
+print(powerMod(3,0,321))        #=1
+print(powerMod(3,320,321))      #=9
+print(powerMod(5,596,1234))     #=1013
+print(powerMod(47874897438974839,859043859042385098494890584209839058243905432534,859043859042385098494890584209839058243905432534859043859042385098494890584209839058243905432534)) #=741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531
 
 
 
