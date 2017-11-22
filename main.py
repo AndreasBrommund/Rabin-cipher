@@ -27,11 +27,15 @@ def decrypt(c,p,q):
         a = t[2]
         b = t[1]
 
-    print("#1")
-    r = c**(int((p+1)/4)) % p
-    print("#1")
-    s = c**(int((q+1)/4)) % q 
-    print("#1")
+
+    assert a*p+b*q == 1, "extendedEuclideanAlgorithm don't work" 
+    assert p % 4 == 3 , "p mod 4 != 3"
+    assert q % 4 == 3 , "1 mod 4 != 3"
+
+    r = powerMod(cryptogram,(p+1)//4,p)
+
+    s = powerMod(cryptogram,(q+1)//4,q)
+    
     x = (a*p*s + b*q*r) % n
     y = (a*p*s - b*q*r) % n
     
