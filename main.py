@@ -9,14 +9,31 @@ def getGoodPrime():
         if p % 4 == 3:
             return p
 
+def stringToInt(string):
+    res = 0
+    for c in string:
+        res = (res << 8) | ord(c) 
+    return res
+
+def intToString(integer):
+    chars = []
+    while integer != 0:
+        chars.append(chr(integer & 0xFF))
+        integer = integer >> 8
+    return "".join(reversed(chars))
+
 # TODO Need to be in the group so it need to fit
 # TODO Add some randomes salt, read in the book
 def encrypt(message,publicKey):
     
-    postfix = message & 0xFFFFFFFFFFFFFFFF #Get the 64 first bits
-    message = (message << 64) | postfix
-     
-    return message**2 % publicKey
+    intRepresentation = stringToInt(message)
+    
+    postfix = intRepresentation & 0xFFFFFFFFFFFFFFFF #Get the 64 first bits
+    intRepresentation = (intRepresentation << 64) | postfix
+
+    assert intRepresentation < publicKey, "The int representation of the message is > public key"
+    
+    return intRepresentation**2 % publicKey
 
 def decrypt(cryptogram,p,q):
     
@@ -49,7 +66,7 @@ def decrypt(cryptogram,p,q):
         postfix = message & 0xFFFFFFFFFFFFFFFF #Get the postfix 
         message = message >> 64 # Remove postfix
         if ((postfix ^ message) & 0xFFFFFFFFFFFFFFFF) == 0:
-            return message
+            return intToString(message)
     
     print("No postfix matched the expected postfix")
     return -1
