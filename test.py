@@ -47,5 +47,45 @@ def test_gcd():
 
 
 def test_extended_euclidean_algorithm():
-    assert crypto_math.extended_euclidean_algorithm(4864, 3458) == (38, 32, -45), "extended_euclidean_algorithm error"
-    print("Passed test_extended_euclidean_algorithm")
+    a = 4864
+    b = 3458
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+
+    a = 2
+    b = 3
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+
+    a = 1002032312443243421
+    b = 75894327589475890473258907458
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+
+    a = 10020323124432434218
+    b = 75894327589475890473258907458
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+
+    a = 1
+    b = 1
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+
+    a = 1754895789437589023750894789237458942375897432098574325
+    b = 1754895789437589023750894789237458942375897432098574325
+    d, x, y = crypto_math.extended_euclidean_algorithm(a, b)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
+    assert a * x + b * y == d, "extended_euclidean_algorithm error"
+

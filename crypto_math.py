@@ -11,9 +11,8 @@ def extended_euclidean_algorithm(a: int, b: int) -> (int, int, int):
         return -1
 
     if a < b:
-        # TODO fix this, call it with revers parameter
-        print("The condition a >= b is not fulfilled")
-        return -1
+        d, y, x = extended_euclidean_algorithm(b, a)
+        return d, x, y
 
     if b == 0:
         d = a
