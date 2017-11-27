@@ -1,3 +1,4 @@
+from Rabin import Rabin
 import crypto_math
 
 
@@ -88,4 +89,21 @@ def test_extended_euclidean_algorithm():
     assert a * x + b * y == d, "extended_euclidean_algorithm error"
     d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
     assert a * x + b * y == d, "extended_euclidean_algorithm error"
+    print("Passed test_extended_euclidean_algorithm")
 
+
+def test_rabin_cipher():
+    for key in range(1024, 1024+128*5, 128):
+
+        rabin = Rabin(key)
+
+        m = "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now " \
+            "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now"
+
+        c = rabin.encrypt(m, rabin.public_key)
+        mm = rabin.decrypt(c)
+
+        assert c != m, "c == m"
+        assert mm == m, "D(E(m)) != m"
+
+    print("Passed test_rabin_cipher")
