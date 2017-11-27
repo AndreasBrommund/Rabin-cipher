@@ -25,10 +25,14 @@ def int_to_int_blocks(integer: int, block_size: int) -> [str]:
     while integer.bit_length() >= (block_size-1):
         mask = 2**(block_size-1) - 1
         block = ((integer & mask) << 1) | 1  # Mask and add a bool value (last bit of padding)
+
+        while block.bit_length() != block_size:
+            block = block << 1
+
         blocks.append(block)
         integer = integer >> (block_size-1)
 
-    if integer.bit_length() != 0:
+    if integer != 0:
         diff = block_size-integer.bit_length()
         integer = integer << diff
         blocks.append(integer | 2**(diff-1))
