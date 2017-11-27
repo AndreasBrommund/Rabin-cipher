@@ -1,5 +1,6 @@
 from Rabin import Rabin
 import crypto_math
+import util
 
 
 def test_power_mod():
@@ -90,6 +91,25 @@ def test_extended_euclidean_algorithm():
     d, y, x = crypto_math.extended_euclidean_algorithm(b, a)
     assert a * x + b * y == d, "extended_euclidean_algorithm error"
     print("Passed test_extended_euclidean_algorithm")
+
+
+def test_int_to_list_and_list_to_int():
+
+    for i in range(0,100):
+        for s in range(2,100):
+            blocks = util.int_to_int_blocks(i,s)
+            integer = util.int_block_to_int(blocks,s)
+
+            assert integer == i, "test_int_to_list_and_list_to_int error"
+
+    for i in range(100000000000, 100000000100):
+        for s in range(2,1024):
+            blocks = util.int_to_int_blocks(i,s)
+            integer = util.int_block_to_int(blocks,s)
+
+            assert integer == i, "test_int_to_list_and_list_to_int error"
+
+    print("Passed test_int_to_list_and_list_to_int")
 
 
 def test_rabin_cipher():
