@@ -31,11 +31,12 @@ class Rabin:
 
     def decrypt(self, cryptogram: int):
 
-        if self.__mode == CipheringMode.OFB:
-            int_representation = CipheringMode.decrypt_ofb(cryptogram, self.public_key, self.__block_size,
-                                                           self.__encrypt)
-            return util.int_to_string(int_representation)
-        return -1
+        # if self.__mode == CipheringMode.OFB:
+        #    int_representation = CipheringMode.decrypt_ofb(cryptogram, self.public_key, self.__block_size,
+        #                                                   self.__encrypt)
+        #    return util.int_to_string(int_representation)
+
+        return self.__decrypt(cryptogram)
 
     def __decrypt(self, cryptogram: int):
 
@@ -59,18 +60,18 @@ class Rabin:
 
     def encrypt(self, message: str, public_key: int):
 
+        # if self.__mode == CipheringMode.OFB:
+        #    return CipheringMode.encrypt_ofb(int_representation, public_key, self.__block_size, self.__encrypt)
+
         int_representation = util.string_to_int(message)
 
-        if self.__mode == CipheringMode.OFB:
-            return CipheringMode.encrypt_ofb(int_representation, public_key, self.__block_size, self.__encrypt)
-
-        return -1
+        return self.__encrypt(int_representation, public_key)
 
     # TODO Add some randomness salt, read in the book
     # TODO If the message is to short will two message with differed public keys generate the same cipher
     def __encrypt(self, int_representation: int, public_key: int):
 
-        # TODO don't do this here int_representation = (int_representation << self.__postfix_length) | self.__postfix
+        int_representation = (int_representation << self.__postfix_length) | self.__postfix
 
         assert int_representation < public_key, "The int representation of th message is > public key"""
 
@@ -89,6 +90,8 @@ class Rabin:
 class CipheringMode(Enum):
     OFB = "Output Feedback"
 
+    """"
+    # TODO !!!!!!! This is not working becouse everyone can ciper and decipher now, only using the public key
     @staticmethod
     def encrypt_ofb(message: int, public_key: int, block_size: int, encrypt):
 
@@ -112,7 +115,10 @@ class CipheringMode(Enum):
             cipher = cipher | (block ^ xor_value)
 
         return cipher
+    """
 
+    # This is just mega stupid
+    """
     @staticmethod
     def decrypt_ofb(cipher: int, public_key: int, block_size: int, encrypt):
 
@@ -136,3 +142,4 @@ class CipheringMode(Enum):
             messages_block.append(block ^ xor_value)
 
         return util.int_block_to_int(messages_block, block_size)
+    """
