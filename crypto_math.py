@@ -92,20 +92,3 @@ def __get_good_prime(key_size: int):
 
         if p % 4 == 3:
             return p
-
-
-def gcd(a, b):
-    if b == 0:
-        return a, 1, 0  # (D,X,Y) a = a * 1 - 0*0
-    t = gcd(b, a % b)
-
-    return t
-
-
-def gcd1(a, b):
-    while b > 0:
-        q = int(a / b)
-        r = a - q * b
-        a = b
-        b = r
-    return a

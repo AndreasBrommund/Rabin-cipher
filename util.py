@@ -1,3 +1,7 @@
+import math
+import random
+
+
 def int_to_string(integer: int) -> str:
     chars = []
     while integer != 0:
@@ -13,43 +17,57 @@ def string_to_int(string: str) -> int:
     return res
 
 
-# block size in bits will add a bool at the end of the block
-# integer >= 0
-# block_size >= 2
-def int_to_int_blocks(integer: int, block_size: int) -> [str]:
+def int_to_int_blocks(integer: int, block_size: int) -> [int]:
+    """32 <= block_size <= 1024
+    """
 
-    assert integer >= 0, "Integer need to be >= 0"
-    assert block_size >= 2, "block_size need to be >= 2"
+    assert 32 <= block_size <= 1024, "Block size need to be between 32 and 1024 "
 
-    blocks = []
-    while integer.bit_length() >= (block_size-1):
-        mask = 2**(block_size-1) - 1
-        block = ((integer & mask) << 1) | 1  # Mask and add a bool value (last bit of padding)
+    number_of_blocks = max(int(math.ceil(integer.bit_length() / block_size)),1)
+    blocks = [0] * number_of_blocks
 
-        while block.bit_length() != block_size:
-            block = block << 1
+    for i in range(0, number_of_blocks - 1):
+        blocks[i] = integer & (2 ** block_size - 1)
+        integer = integer >> block_size
 
-        blocks.append(block)
-        integer = integer >> (block_size-1)
+    padding_size = block_size - integer.bit_length()
 
-    if integer != 0:
-        diff = block_size-integer.bit_length()
-        integer = integer << diff
-        blocks.append(integer | 2**(diff-1))
+    blocks[number_of_blocks - 1] = integer
+
+    # 16 is numbers of bits used for define the padding length.
+    if padding_size >= 16:
+        # Fill the last black with padding
+        number_of_random_bits = padding_size - 16
+    else:
+        # Fill a new block with padding
+        number_of_random_bits = block_size - 16
+        blocks.append(0)
+        number_of_blocks += 1
+        padding_size = block_size
+
+    for _ in range(0, number_of_random_bits):
+        blocks[number_of_blocks - 1] = blocks[number_of_blocks - 1] << 1
+        blocks[number_of_blocks - 1] += random.getrandbits(1)
+
+    blocks[number_of_blocks - 1] = blocks[number_of_blocks - 1] << 16
+    blocks[number_of_blocks - 1] += padding_size
 
     return list(reversed(blocks))
 
 
-# block size in bits
 def int_block_to_int(integers: [int], block_size: int) -> int:
+    """32 <= block_size <= 1024
+    """
+
+    assert 32 <= block_size <= 1024, "Block size need to be between 32 and 1024 "
 
     res = 0
 
-    for block in integers:
-        while block & 1 == 0:
-            block = block >> 1  # Remove the padding (0)
+    padding = integers[0] & (2 ** 16 - 1)
+    res = res | (integers[0] >> padding)
 
-        res = res | (block >> 1)  # Remove end of padding bit (1) and add it to res
-        res = res << (block_size - 1)
+    for block in integers[1:]:
+        res = res << block_size
+        res = res | block
 
-    return res >> (block_size - 1)  # Need to shift it back once
+    return res

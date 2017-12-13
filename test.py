@@ -1,4 +1,4 @@
-from Rabin import Rabin, CipheringMode
+from public_key import Rabin
 import crypto_math
 import util
 
@@ -94,27 +94,29 @@ def test_extended_euclidean_algorithm():
 
 
 def test_int_to_list_and_list_to_int():
-    for i in range(0, 100):
-        for s in range(2, 100):
+    for i in range(0, 10000):
+        for s in range(32, 100):
             blocks = util.int_to_int_blocks(i, s)
 
             for b in blocks:
-                assert b.bit_length() == s, "test_int_to_list_and_list_to_int error"
+                assert b.bit_length() <= s, "test_int_to_list_and_list_to_int error"
 
             integer = util.int_block_to_int(blocks, s)
 
             assert integer == i, "test_int_to_list_and_list_to_int error"
 
-    for i in range(100000000000, 100000000100):
-        for s in range(2, 1024):
-            blocks = util.int_to_int_blocks(i, s)
+    for i in range(16383, 17179869183,10000000):
 
-            for b in blocks:
-                assert b.bit_length() == s, "test_int_to_list_and_list_to_int error"
 
-            integer = util.int_block_to_int(blocks, s)
+        blocks = util.int_to_int_blocks(i, 32)
 
-            assert integer == i, "test_int_to_list_and_list_to_int error"
+        for b in blocks:
+            assert b.bit_length() <= s, "test_int_to_list_and_list_to_int error"
+
+        integer = util.int_block_to_int(blocks, s)
+
+        assert integer == i, "test_int_to_list_and_list_to_int error"
+
 
     print("Passed test_int_to_list_and_list_to_int")
 
