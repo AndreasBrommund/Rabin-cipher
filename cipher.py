@@ -1,12 +1,15 @@
 from enum import Enum
+import util
 
 
 class SimpleCipher:
-    def encrypt(self, key: int, message: str) -> int:
-        return 0
+    @staticmethod
+    def encrypt(key: int, message: str) -> int:
+        return key ^ util.string_to_int(message)
 
-    def decrypt(self, key: int, cryptogram: int) -> str:
-        return ""
+    @staticmethod
+    def decrypt(key: int, cryptogram: int) -> str:
+        return util.int_to_string(key ^ cryptogram)
 
 
 class CipheringMode(Enum):
