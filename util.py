@@ -23,7 +23,7 @@ def int_to_int_blocks(integer: int, block_size: int) -> [int]:
 
     assert 32 <= block_size <= 1024, "Block size need to be between 32 and 1024 "
 
-    number_of_blocks = max(int(math.ceil(integer.bit_length() / block_size)),1)
+    number_of_blocks = max(int(math.ceil(integer.bit_length() / block_size)), 1)
     blocks = [0] * number_of_blocks
 
     for i in range(0, number_of_blocks - 1):

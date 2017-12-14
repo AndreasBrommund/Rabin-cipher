@@ -2,7 +2,6 @@ from Crypto.Util import number
 
 
 def extended_euclidean_algorithm(a: int, b: int) -> (int, int, int):
-
     if a < 0:
         print("A need to be non-negative")
         return -1
