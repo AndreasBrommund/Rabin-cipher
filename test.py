@@ -18,34 +18,11 @@ def test_power_mod():
     assert crypto_math.power_mod(
         47874897438974839, 859043859042385098494890584209839058243905432534,
         859043859042385098494890584209839058243905432534859043859042385098494890584209839058243905432534) == \
-        741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531, \
+           741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531, \
         "power_mod error"
     assert crypto_math.power_mod(69, 2, 77) == 64, "power_mod error"
     assert crypto_math.power_mod(69, 4, 77) == 15, "power_mod error"
     print("Passed test_power_mod")
-
-
-def test_gcd():
-    assert crypto_math.gcd(12, 5) == (1, 1, 0), "gcd error"
-    assert crypto_math.gcd(45, 2) == (1, 1, 0), "gcd error"
-    assert crypto_math.gcd(12, 5) == (1, 1, 0), "gcd error"
-    assert crypto_math.gcd(30, 7) == (1, 1, 0), "gcd error"
-    assert crypto_math.gcd(31, 8) == (1, 1, 0), "gcd error"
-    assert crypto_math.gcd(20, 6) == (2, 1, 0), "gcd error"
-    assert crypto_math.gcd(28, 20) == (4, 1, 0), "gcd error"
-    assert crypto_math.gcd(20, 8) == (4, 1, 0), "gcd error"
-    assert crypto_math.gcd(8, 4) == (4, 1, 0), "gcd error"
-
-    assert crypto_math.gcd1(12, 5) == 1, "gcd1 error"
-    assert crypto_math.gcd1(45, 2) == 1, "gcd1 error"
-    assert crypto_math.gcd1(12, 5) == 1, "gcd1 error"
-    assert crypto_math.gcd1(30, 7) == 1, "gcd1 error"
-    assert crypto_math.gcd1(31, 8) == 1, "gcd1 error"
-    assert crypto_math.gcd1(20, 6) == 2, "gcd1 error"
-    assert crypto_math.gcd1(28, 20) == 4, "gcd1 error"
-    assert crypto_math.gcd1(20, 8) == 4, "gcd1 error"
-    assert crypto_math.gcd1(8, 4) == 4, "gcd1 error"
-    print("Passed test_gcd")
 
 
 def test_extended_euclidean_algorithm():
@@ -105,25 +82,74 @@ def test_int_to_list_and_list_to_int():
 
             assert integer == i, "test_int_to_list_and_list_to_int error"
 
-    for i in range(16383, 17179869183,10000000):
-
+    for i in range(16383, 17179869183, 10000000):
 
         blocks = util.int_to_int_blocks(i, 32)
 
         for b in blocks:
-            assert b.bit_length() <= s, "test_int_to_list_and_list_to_int error"
+            assert b.bit_length() <= 32, "test_int_to_list_and_list_to_int error"
 
-        integer = util.int_block_to_int(blocks, s)
+        integer = util.int_block_to_int(blocks, 32)
 
         assert integer == i, "test_int_to_list_and_list_to_int error"
 
+    # Some edge cases
+    num = {0xFFFFFFFF, 0x7FFFFFFF, 0x1FFFFFFFF, 0xFFFF, 0x7FFF, 0x1FFFF, 0x100000000, 0x80000000, 0x40000000, 0x8000,
+           0x4000, 0x10000, 0x0, 0x1}
+
+    for i in num:
+
+        blocks = util.int_to_int_blocks(i, 32)
+
+        for b in blocks:
+            assert b.bit_length() <= 32, "test_int_to_list_and_list_to_int error"
+
+        integer = util.int_block_to_int(blocks, 32)
+
+        assert integer == i, "test_int_to_list_and_list_to_int error"
+
+    # Some extreme
+
+    num = [4324 ** 434, 2 ** 233, -1 * (566 ** 232), 2 ** 233 - 1, 2 ** 42373, 2 ** 42373 - 1, 3 ** 23445]
+
+    for i in num:
+        for s in range(32, 100):
+
+            blocks = util.int_to_int_blocks(i, s)
+
+            for b in blocks:
+                assert b.bit_length() <= s, "test_int_to_list_and_list_to_int error"
+
+            integer = util.int_block_to_int(blocks, s)
+
+            assert integer == i, "test_int_to_list_and_list_to_int error"
 
     print("Passed test_int_to_list_and_list_to_int")
 
 
+def test_string_to_int_and_int_to_string():
+    strings = {"", "A", "A AAA AA A A AAAA A A  AA A A",
+               "Bacon ipsum dolor amet alcatra filet mignon pig frankfurter, short ribs short loin tri-tip ball tip "
+               "bresaola sirloin. Corned beef hamburger ground round fatback frankfurter tenderloin, "
+               "meatloaf landjaeger beef short ribs biltong ham hock short loin. Fatback boudin shankle, "
+               "ribeye tenderloin pancetta spare ribs. Turkey leberkas swine, bacon shank frankfurter picanha "
+               "drumstick salami. Brisket chuck picanha swine pig ham hock strip steak, burgdoggen pastrami short "
+               "loin ham cow sausage. "
+               }
+
+    for s in strings:
+        string_int = util.string_to_int(s)
+        string = util.int_to_string(string_int)
+
+        assert string == s, "test_string_to_int_and_int_to_string error"
+
+    print("Passed test_string_to_int_and_int_to_string")
+
+
 def test_rabin_cipher():
-    for key in range(1024, 1024 + 128 * 5, 128):
-        rabin = Rabin(key, CipheringMode.OFB, 1024)
+
+    for key_size in range(1024, 1024 + 128 * 5, 128):
+        rabin = Rabin(key_size)
 
         m = "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now " \
             "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now"
