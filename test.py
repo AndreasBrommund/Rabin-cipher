@@ -1,6 +1,7 @@
 from public_key import Rabin
+from cipher import *
 import crypto_math
-import util
+import random
 
 
 def test_power_mod():
@@ -147,28 +148,40 @@ def test_string_to_int_and_int_to_string():
 
 
 def test_rabin_cipher():
-
+    modes = {CipheringMode.CBC, CipheringMode.ECB}
+    messages = {"Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now",
+                "",
+                "A",
+                "Bacon ipsum dolor amet hamburger porchetta shank pastrami capicola kevin picanha salami. Leberkas "
+                "venison flank biltong corned beef, salami cow drumstick chuck ham prosciutto ribeye shank short ribs "
+                "boudin. Tail capicola fatback hamburger biltong sirloin. Pork doner cupim, tenderloin pork loin "
+                "chicken frankfurter. Strip steak tenderloin pork belly bresaola capicola. Porchetta biltong pork "
+                "loin, tail pancetta strip steak flank. Short loin sausage jowl bacon beef ribs.Short ribs chicken "
+                "pork chop, cupim biltong beef ribs burgdoggen meatball porchetta pastrami prosciutto. Pancetta bacon "
+                "kielbasa, pork chop alcatra rump short ribs frankfurter buffalo. Tri-tip rump short loin kielbasa "
+                "ham ball tip beef, hamburger tail pork belly bresaola strip steak pork chop buffalo leberkas. "
+                "Meatloaf jerky turkey, porchetta burgdoggen beef ham sirloin pastrami ground round tri-tip. Short "
+                "loin corned beef brisket porchetta bresaola pancetta kielbasa burgdoggen cupim pork chop venison "
+                "hamburger. Pig pancetta ribeye jowl bresaola tail pork chop pastrami pork loin chuck chicken "
+                "burgdoggen leberkas.Ham drumstick pork loin jerky venison alcatra, bacon bresaola porchetta leberkas "
+                "turducken brisket. Pancetta ham andouille pork kevin chicken shoulder shank buffalo brisket salami "
+                "turkey shankle short ribs. Porchetta flank kevin chicken salami chuck shoulder. Chuck bacon kevin, "
+                "ground round tri-tip doner meatball beef ribs jowl in pastrami bacon chuck buffalo alcatra. Buffalo "
+                "pork bellyrankfurter porchetta filet mignon fatback tri-tip boudin pork loin doner cow tongue. "
+                "Pancetta corned beef tail tri-tip flank leb "
+                }
     for key_size in range(1024, 1024 + 128 * 5, 128):
-        rabin = Rabin(key_size)
+        for block_size in range(32, min(key_size, 1024), 256):
+            for mode in modes:
+                rabin = Rabin(key_size)
+                cipher = BlockCipher(block_size, mode, rabin.encrypt, rabin.decrypt)
+                for m in messages:
+                    iv = random.getrandbits(block_size)
+                    c = cipher.encrypt(m, rabin.public_key, iv)
+                    mm = cipher.decrypt(c, iv)
+                    for i, b in enumerate(util.int_to_int_blocks(util.string_to_int(m), block_size)):
+                        assert b != c[i], "The block is not crypted"
 
-        m = "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now " \
-            "Hello is this massage working? Need to make this a bit bigger I think ok it wasn't enough maybe now"
-
-        c = rabin.encrypt(m, rabin.public_key)
-        mm = rabin.decrypt(c)
-
-        assert c != m, "c == m"
-        assert mm == m, "D(E(m)) != m"
-
-        # for key in range(1024, 1024 + 128 * 5, 128):
-        # rabin = Rabin(key, CipheringMode.OFB, 1024)
-
-        # m = "Bacon ipsum dolor amet porchetta pork pork loin leberkas spare ribs, brisket strip steak burgdoggen. Pastrami buffalo jowl ball tip shankle spare ribs, meatball sirloin pork belly ground round corned beef tail pancetta bresaola sausage. Short ribs tri-tip corned beef shoulder capicola, pancetta short loin buffalo leberkas porchetta fatback. Pork loin strip steak shoulder leberkas, beef prosciutto turducken burgdoggen tri-tip picanha kielbasa porchetta ball tip landjaeger frankfurter. Swine brisket sirloin chuck ham jerky, fatback leberkas porchetta alcatra ribeye pancetta turkey beef ribs.Buffalo pork loin frankfurter brisket short loin kielbasa. Cow frankfurter bacon landjaeger. Venison sirloin ball tip, andouille t-bone fatback drumstick capicola beef shank. Shoulder alcatra bresaola, tail brisket tenderloin tri-tip prosciutto short loin. Shoulder chuck flank prosciutto, frankfurter tongue beef.Andouille turkey capicola short loin, frankfurter turducken porchetta sirloin pig doner spare ribs. Frankfurter short loin kielbasa pastrami beef t-bone. Tri-tip sausage ham pastrami ribeye meatball shoulder flank beef ribs. Kielbasa salami hamburger, tongue short loin cupim swine alcatra boudin fatback. Meatloaf shank brisket leberkas t-bone salami pastrami meatball jerky.Drumstick ham hock flank landjaeger, pancetta cow prosciutto. Jowl ham hock leberkas buffalo shoulder, turkey doner shank meatball venison meatloaf t-bone strip steak. Tenderloin alcatra doner ball tip burgdoggen ground round. Beef ribs prosciutto buffalo corned beef.Pork pork belly bacon shankle picanha, pig tri-tip ground round sausage meatloaf. Ribeye filet mignon cupim tri-tip strip steak. Bacon chicken filet mignon andouille, pastrami tail brisket tenderloin hamburger pork belly pork biltong meatball ribeye capicola. Sausage ham beef, hamburger jowl shoulder jerky landjaeger chuck pastrami cupim buffalo pancetta shank capicola. Chicken shankle meatball shoulder, landjaeger ground round jowl. Filet mignon short ribs beef biltong, pancetta tenderloin t-bone ham bacon ground round brisket shankle turkey pastrami.Pig kielbasa ball tip cow pancetta, salami sirloin ham hock cupim shoulder frankfurter boudin beef. Jerky tongue landjaeger doner alcatra burgdoggen shankle beef ribs porchetta cow frankfurter kielbasa jowl tail. Meatloaf tongue porchetta short loin, flank landjaeger boudin buffalo turkey sausage beef shankle drumstick pancetta. Pork chop fatback rump shank landjaeger prosciutto capicola filet mignon burgdoggen turducken ham leberkas tri-tip pork loin sirloin. Strip steak salami corned beef short loin frankfurter pig.Bacon biltong shoulder, sausage ham pig tail capicola turkey sirloin. Tri-tip meatloaf ground round ham sausage. Chuck rump picanha, buffalo doner cupim tri-tip. Turducken t-bone salami, buffalo cupim sausage brisket tail pork belly kevin pork shoulder. Corned beef tri-tip spare ribs kevin chuck. Alcatra biltong filet mignon, tail beef chuck corned beef shankle flank ball tip turducken meatball burgdoggen. Pork chop cupim beef ribs picanha frankfurter pastrami.Pork belly ball tip ground round, chicken sirloin capicola ham hock jerky. Ham ground round turducken andouille. Doner pork loin tenderloin pork belly kielbasa brisket alcatra pork chop ground round. Prosciutto ground round meatloaf swine t-bone. Flank andouille boudin, pig shank turkey meatball leberkas strip steak tail jerky pork.Bacon beef salami pork loin, venison filet mignon turkey t-bone boudin kielbasa pork chop fatback spare ribs. Ham frankfurter beef ribs landjaeger, picanha shankle venison andouille. Cow turducken doner, drumstick chicken tongue bacon pancetta sirloin short loin kevin porchetta. Shoulder chicken filet mignon, alcatra leberkas chuck prosciutto jowl porchetta pork belly pork chop cow.Sirloin flank jowl, shoulder fatback cupim brisket sausage hamburger picanha ground round spare ribs shank alcatra. Boudin beef ribs beef, brisket kevin rump picanha meatball leberkas frankfurter fatback. Kevin pork belly corned beef bacon leberkas. Ground round ham hock salami swine shoulder turkey picanha shankle shank tail. Salami pork belly short ribs shank landjaeger pig. Ball tip burgdoggen spare ribs bresaola filet mignon tail landjaeger pork loin jowl corned beef t-bone tenderloin tri-tip.Does your lorem ipsum text long for something a little meatier? Give our generator a try. its tasty!"
-
-        # c = rabin.encrypt(m, rabin.public_key)
-        # mm = rabin.decrypt(c)
-
-    #    assert c != m, "c == m"
-    #    assert mm == m, "D(E(m)) != m"
+                    assert mm == m, "D(E(m)) != m"
 
     print("Passed test_rabin_cipher")
