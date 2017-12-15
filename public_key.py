@@ -1,14 +1,11 @@
 import crypto_math
-import util
-
+import random
 
 class Rabin:
     def __init__(self, key_size: int):
 
         self.__postfix_length = 64
-        self.__postfix = 0x8B894ADEF9520024  # Random 64 bit
-
-        assert self.__postfix.bit_length() == self.__postfix_length, "Not the same length"
+        self.__postfix = random.getrandbits(self.__postfix_length)
 
         p, q = crypto_math.generate_primes(key_size)
 
@@ -19,12 +16,9 @@ class Rabin:
         self.__private_key = (p, q)
         self.__inverse = (p_inverse, q_inverse)
 
-        assert p * p_inverse + q * q_inverse == 1, "extendedEuclideanAlgorithm don't work"
-        assert p % 4 == 3, "p mod 4 != 3"
-        assert q % 4 == 3, "q mod 4 != 3"
-        assert p != q, "p and q can't be equal"
+        self.sanity_check()
 
-    def decrypt(self, cryptogram: int):
+    def decrypt(self, cryptogram: int) -> int:
 
         p = self.__private_key[0]
         q = self.__private_key[1]
@@ -39,21 +33,18 @@ class Rabin:
             postfix = message & (2 ** self.__postfix_length - 1)  # Get the postfix
             message = message >> self.__postfix_length  # Remove postfix
             if postfix == self.__postfix:
-                return util.int_to_string(message)
+                return message
 
         print("No postfix matched the expected postfix")
         return -1
 
-    # TODO Add some randomness salt, read in the book
-    # TODO If the message is to short will two message with differed public keys generate the same cipher
-    def encrypt(self, message: str, public_key: int):
+    def encrypt(self, message_int: int, public_key: int) -> int:
 
-        int_representation = util.string_to_int(message)
-        int_representation = (int_representation << self.__postfix_length) | self.__postfix
+        message_int = (message_int << self.__postfix_length) | self.__postfix
 
-        assert int_representation < public_key, "The int representation of th message is > public key"""
+        assert message_int < public_key, "The int representation of th message is > public key"""
 
-        return int_representation ** 2 % public_key
+        return message_int ** 2 % public_key
 
     def debug(self):
         print("p: ", self.__private_key[0])
@@ -63,3 +54,15 @@ class Rabin:
         print("public key: ", self.public_key)
         print("postfix mask: ", self.__postfix)
         print("postfix length: ", self.__postfix_length)
+
+    def sanity_check(self):
+        p = self.__private_key[0]
+        q = self.__private_key[1]
+
+        p_inverse = self.__inverse[0]
+        q_inverse = self.__inverse[1]
+
+        assert p * p_inverse + q * q_inverse == 1, "extendedEuclideanAlgorithm don't work"
+        assert p % 4 == 3, "p mod 4 != 3"
+        assert q % 4 == 3, "q mod 4 != 3"
+        assert p != q, "p and q can't be equal"
