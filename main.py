@@ -1,5 +1,4 @@
 import test
-from cipher import SimpleCipher
 
 
 def main():

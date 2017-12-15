@@ -15,3 +15,5 @@ class SimpleCipher:
 class CipheringMode(Enum):
     OFB = "Output Feedback"
     ECB = "Electronic Codebook"
+
+    
