@@ -1,7 +1,8 @@
 from public_key import Rabin
-from cipher import *
+from cipher import BlockCipher, CipheringMode
 import crypto_math
 import random
+import util
 
 
 def test_power_mod():
@@ -19,7 +20,7 @@ def test_power_mod():
     assert crypto_math.power_mod(
         47874897438974839, 859043859042385098494890584209839058243905432534,
         859043859042385098494890584209839058243905432534859043859042385098494890584209839058243905432534) == \
-           741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531, \
+        741409898527092967581108125001817633038884962666623420677168281613882656173807423395032534913531, \
         "power_mod error"
     assert crypto_math.power_mod(69, 2, 77) == 64, "power_mod error"
     assert crypto_math.power_mod(69, 4, 77) == 15, "power_mod error"

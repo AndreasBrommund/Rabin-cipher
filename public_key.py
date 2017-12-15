@@ -1,6 +1,7 @@
 import crypto_math
 import random
 
+
 class Rabin:
     def __init__(self, key_size: int):
 
