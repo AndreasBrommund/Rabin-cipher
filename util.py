@@ -7,6 +7,7 @@ def int_to_string(integer: int) -> str:
     while integer != 0:
         chars.append(chr(integer & 0xFF))
         integer = integer >> 8
+
     return "".join(reversed(chars))
 
 

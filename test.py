@@ -178,7 +178,7 @@ def test_rabin_cipher():
                 cipher = BlockCipher(block_size, mode, rabin.encrypt, rabin.decrypt)
                 for m in messages:
                     iv = random.getrandbits(block_size)
-                    c = cipher.encrypt(m, rabin.public_key, iv)
+                    c = cipher.encrypt(m, iv)
                     mm = cipher.decrypt(c, iv)
                     for i, b in enumerate(util.int_to_int_blocks(util.string_to_int(m), block_size)):
                         assert b != c[i], "The block is not crypted"
